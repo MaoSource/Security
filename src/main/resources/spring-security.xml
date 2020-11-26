@@ -29,6 +29,9 @@ http://www.springframework.org/schema/security/spring-security-4.2.xsd">
         <security:access-denied-handler error-page="/error"/>
         <security:csrf disabled="true"/>
 
+        <!-- rememberMe功能 -->
+        <!-- token-validity-seconds:token有效秒数 -->
+        <security:remember-me token-repository-ref="jdbcTokenRepository" token-validity-seconds="3600"/>
     </security:http>
 
     <security:authentication-manager>
@@ -44,4 +47,10 @@ http://www.springframework.org/schema/security/spring-security-4.2.xsd">
     <bean id="MyAuthenticationFailureHandler" class="com.source.security.MyAuthenticationFailureHandler"/>
     <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
     <bean id="MyValidateCodeFilter" class="com.source.code.ValidateCodeFilter"/>
+    <bean id="jdbcTokenRepository" class="org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl">
+        <!-- 注入DataSource -->
+        <property name="dataSource" ref="dataSource"/>
+        <!-- 自动创建remember状态表 -->
+        <property name="createTableOnStartup" value="true"/>
+    </bean>
 </beans>
