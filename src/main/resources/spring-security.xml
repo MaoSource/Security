@@ -51,6 +51,6 @@ http://www.springframework.org/schema/security/spring-security-4.2.xsd">
         <!-- 注入DataSource -->
         <property name="dataSource" ref="dataSource"/>
         <!-- 自动创建remember状态表 -->
-        <property name="createTableOnStartup" value="true"/>
+<!--        <property name="createTableOnStartup" value="true"/>-->
     </bean>
 </beans>

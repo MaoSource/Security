@@ -2,6 +2,8 @@ package com.source.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import javax.servlet.ServletException;
@@ -25,6 +27,15 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
         Map map = new HashMap<>();
+//        获取当前用户信息
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal != null){
+            if (principal instanceof UserDetails){
+                UserDetails userDetails = (UserDetails)principal;
+                String username = userDetails.getUsername();
+                map.put("username",username);
+            }
+        }
 
         map.put("Success",true);
 
