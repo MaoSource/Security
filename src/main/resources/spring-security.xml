@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+http://www.springframework.org/schema/security
+http://www.springframework.org/schema/security/spring-security-4.2.xsd">
+
+    <security:http>
+<!--        拦截资源-->
+        <security:intercept-url pattern="/user/list" access="hasAnyAuthority('ROLE_LIST')"/>
+        <security:intercept-url pattern="/user/add" access="hasAnyAuthority('ROLE_ADD')"/>
+        <security:intercept-url pattern="/user/update" access="hasAnyAuthority('ROLE_UPDATE')"/>
+        <security:intercept-url pattern="/user/delete" access="hasAnyAuthority('ROLE_DELETE')"/>
+
+        <security:intercept-url pattern="/index.jsp" access="permitAll()"/>
+        <security:intercept-url pattern="/js/**" access="permitAll()"/>
+        <security:intercept-url pattern="/Authentication" access="permitAll()"/>
+        <security:intercept-url pattern="/code/image" access="permitAll()"/>
+<!--        <security:intercept-url pattern="/login" access="permitAll()"/>-->
+        <security:intercept-url pattern="/**" access="isFullyAuthenticated()"/>
+
+        <!-- 自定义Spring Security过滤器 -->
+        <security:custom-filter ref="MyValidateCodeFilter" before="FORM_LOGIN_FILTER"/>
+
+        <security:form-login login-page="/Authentication" login-processing-url="/loginInfo" authentication-success-handler-ref="MyAuthenticationSuccessHandler" authentication-failure-handler-ref="MyAuthenticationFailureHandler"/>
+        <!-- 错误处理 -->
+        <security:access-denied-handler error-page="/error"/>
+        <security:csrf disabled="true"/>
+
+    </security:http>
+
+    <security:authentication-manager>
+        <security:authentication-provider user-service-ref="MyUserDetailService">
+            <!-- 使用加密算法 -->
+            <security:password-encoder ref="passwordEncoder"/>
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+    <bean id="MyUserDetailService" class="com.source.security.MyUserDetailService"/>
+
+    <bean id="MyAuthenticationSuccessHandler" class="com.source.security.MyAuthenticationSuccessHandler"/>
+    <bean id="MyAuthenticationFailureHandler" class="com.source.security.MyAuthenticationFailureHandler"/>
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+    <bean id="MyValidateCodeFilter" class="com.source.code.ValidateCodeFilter"/>
+</beans>

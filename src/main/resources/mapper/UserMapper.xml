@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.source.mapper.UserMapper">
+  <resultMap id="BaseResultMap" type="com.source.bean.User">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="realname" jdbcType="VARCHAR" property="realname" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="createDate" jdbcType="DATE" property="createdate" />
+    <result column="lastLoginTime" jdbcType="DATE" property="lastlogintime" />
+    <result column="enabled" jdbcType="INTEGER" property="enabled" />
+    <result column="accountNonExpired" jdbcType="INTEGER" property="accountnonexpired" />
+    <result column="accountNonLocked" jdbcType="INTEGER" property="accountnonlocked" />
+    <result column="credentialsNonExpired" jdbcType="INTEGER" property="credentialsnonexpired" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from sys_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.source.bean.User">
+    insert into sys_user (id, username, realname, 
+      password, createDate, lastLoginTime, 
+      enabled, accountNonExpired, accountNonLocked, 
+      credentialsNonExpired)
+    values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{realname,jdbcType=VARCHAR}, 
+      #{password,jdbcType=VARCHAR}, #{createdate,jdbcType=DATE}, #{lastlogintime,jdbcType=DATE}, 
+      #{enabled,jdbcType=INTEGER}, #{accountnonexpired,jdbcType=INTEGER}, #{accountnonlocked,jdbcType=INTEGER}, 
+      #{credentialsnonexpired,jdbcType=INTEGER})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.source.bean.User">
+    update sys_user
+    set username = #{username,jdbcType=VARCHAR},
+      realname = #{realname,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      createDate = #{createdate,jdbcType=DATE},
+      lastLoginTime = #{lastlogintime,jdbcType=DATE},
+      enabled = #{enabled,jdbcType=INTEGER},
+      accountNonExpired = #{accountnonexpired,jdbcType=INTEGER},
+      accountNonLocked = #{accountnonlocked,jdbcType=INTEGER},
+      credentialsNonExpired = #{credentialsnonexpired,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, username, realname, password, createDate, lastLoginTime, enabled, accountNonExpired, 
+    accountNonLocked, credentialsNonExpired
+    from sys_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <!-- 查询用户 -->
+  <select id="findByUsername" parameterType="string" resultType="com.source.bean.User">
+        select * from sys_user where username = #{value}
+    </select>
+  <select id="selectAll" resultType="com.source.bean.User">
+    select id, username, realname, password, createDate, lastLoginTime, enabled, accountNonExpired, 
+    accountNonLocked, credentialsNonExpired
+    from sys_user
+  </select>
+  <!-- 查询用户的权限 -->
+  <select id="findPermissionByUsername" parameterType="string" resultType="com.source.bean.Permission">
+        select permission.*
+           from
+             sys_user user
+             inner join sys_user_role user_role on user.id = user_role.user_id
+             inner join sys_role_permission role_permission on user_role.role_id = role_permission.role_id
+             inner join sys_permission permission on role_permission.perm_id = permission.id
+             where user.username = #{value};
+    </select>
+  <!-- 修改密码 -->
+  <update id="updatePassword" parameterType="com.source.bean.User">
+    update sys_user set password = #{password} where username = #{username}
+  </update>
+</mapper>

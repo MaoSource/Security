@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+    <h1>登录</h1>
+    <form action="/loginInfo" method="post">
+    <input type="text" name="username"/><br>
+    <input type="password" name="password"/><br>
+        <span style="display: inline">
+            <input type="text" name="imageCode" placeholder="验证码"/>
+            <img src="/code/image"/>
+        </span>
+    <input type="submit" id="loginBth" value="登录"/>
+</form>
+</body>
+</html>
