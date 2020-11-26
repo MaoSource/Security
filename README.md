@@ -33,6 +33,8 @@ Security 做权限更加方便。而 Shiro 需要和 Spring 进行整合开发�
 2）Shiro 依赖性低，不需要任何框架和容器，可以独立运行。Spring Security 依
 赖 Spring 容器。
 
+### 数据库表文件：[点击下载](https://maoyuan.lanzoux.com/i5wcdisa77a)
+
 **过滤器链**
 **核心流程图：**
 
@@ -139,4 +141,46 @@ isFullyAuthenticated() 需要通过验证
 	<!-- 自定义Spring Security过滤器 -->
         <security:custom-filter ref="MyValidateCodeFilter" before="FORM_LOGIN_FILTER"/>
 ```
-可设在之前后之后
+可设在之前或者之后
+
+### rememberMe 记住我
+
+执行流程：
+![image.png](https://asource.top/upload/2020/11/image-35268bd7471a49609513c69ebcd7e13f.png)
+
+首先在登录页面添加单选框：
+```html
+记住我：<input type="checkbox" name="remember-me" value="true"><br>
+```
+name必须为：remember-me
+value必须为：true
+
+在配置文件中注入remember me相关的bean：
+```xml
+	<bean id="jdbcTokenRepository" class="org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl">
+        <!-- 注入DataSource -->
+        <property name="dataSource" ref="dataSource"/>
+        <!-- 自动创建remember状态表 -->
+        <property name="createTableOnStartup" value="true"/>
+    	</bean>
+```
+
+再添加到Security:http中
+
+```xml
+...以上省略
+	<security:http>
+	<!-- rememberMe功能 -->
+        <!-- token-validity-seconds:token有效秒数 -->
+        <security:remember-me token-repository-ref="jdbcTokenRepository" token-validity-seconds="3600"/>
+    	</security:http>
+```
+
+
+重启项目，勾选单选框登录成功就能在cookie中看到remember me的cookie：
+
+![image](https://asource.top/upload/2020/11/image-81ec52e704ac4f179c2fa1da9603a709.png)
+
+在数据库中也能看到自动建立的表：
+
+![image.png](https://asource.top/upload/2020/11/image-f17a88339d124695ae0161de6080c746.png)
